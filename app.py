@@ -180,7 +180,7 @@ st.divider()
 
 # Chart
 st.plotly_chart(build_chart(df.iloc[-50:].reset_index(drop=True), current_ts, lo, hi),
-                use_container_width=True)
+                width='stretch')
 st.divider()
 
 # Part C: history table
@@ -207,7 +207,7 @@ if past:
         }
         for p in reversed(past[-100:])
     ]
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(rows), width='stretch', hide_index=True)
 
 st.caption(
     "Auto-refreshes every 60 s  ·  "
