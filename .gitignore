@@ -54,7 +54,6 @@ ENV/
 *.bak
 *.cache
 
-# Runtime generated (committed separately when final)
+# Runtime generated — live prediction history not committed
 predictions.jsonl
-metrics.json
 grid_search_results.csv
