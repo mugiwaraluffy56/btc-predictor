@@ -3,7 +3,7 @@ import pandas as pd
 from vol import ensemble_vol, cf_quantile, filter_jumps
 
 N_SIMS = 50_000
-RNG = np.random.default_rng(42)
+_RNG   = np.random.default_rng(42)
 
 
 def predict_95(
@@ -11,29 +11,36 @@ def predict_95(
     cache_key: int = -1,
     cal_scalar: float = 1.0,
 ) -> tuple[float, float]:
-    assert len(df_history) >= 72, f"Need at least 72 bars, got {len(df_history)}"
+    """
+    Predict the 95% interval for the next bar close.
 
-    log_ret = np.diff(np.log(df_history["close"].values))
+    No future data must be present in df_history — callers are responsible
+    for passing only bars up to and including the current bar.
+    """
+    if len(df_history) < 72:
+        raise ValueError(f"predict_95 needs ≥72 bars, got {len(df_history)}")
+
+    log_ret   = np.diff(np.log(df_history["close"].values))
     clean_ret = filter_jumps(log_ret)
+    S0        = float(df_history["close"].iloc[-1])
+    mu        = float(log_ret[-24:].mean())
 
-    sigma, df_t = ensemble_vol(df_history, cache_key)
-    mu = float(np.mean(log_ret[-24:]))
-    S0 = float(df_history["close"].iloc[-1])
+    sigma, df_t = ensemble_vol(df_history, log_ret, cache_key)
+    drift       = mu - 0.5 * sigma ** 2
 
-    eps = RNG.standard_t(df=df_t, size=N_SIMS)
-    log_S1 = (mu - 0.5 * sigma**2) + sigma * eps
-    S1 = S0 * np.exp(log_S1)
+    # Monte Carlo simulation
+    eps  = _RNG.standard_t(df=df_t, size=N_SIMS)
+    S1   = S0 * np.exp(drift + sigma * eps)
+    sim_lo, sim_hi = float(np.percentile(S1, 2.5)), float(np.percentile(S1, 97.5))
 
-    raw_lo, raw_hi = np.percentile(S1, [2.5, 97.5])
+    # Cornish-Fisher analytic bounds (uses higher moments of actual returns)
+    cf_lo = S0 * np.exp(drift + sigma * cf_quantile(clean_ret, 0.025))
+    cf_hi = S0 * np.exp(drift + sigma * cf_quantile(clean_ret, 0.975))
 
-    cf_lo_z = cf_quantile(clean_ret, 0.025)
-    cf_hi_z = cf_quantile(clean_ret, 0.975)
-    cf_lo = S0 * np.exp((mu - 0.5 * sigma**2) + sigma * cf_lo_z)
-    cf_hi = S0 * np.exp((mu - 0.5 * sigma**2) + sigma * cf_hi_z)
+    # Take the more conservative of simulation vs analytic
+    lo, hi = min(sim_lo, cf_lo), max(sim_hi, cf_hi)
 
-    lo = min(raw_lo, cf_lo)
-    hi = max(raw_hi, cf_hi)
-
-    mid = (lo + hi) / 2
+    # Apply calibration scalar symmetrically around midpoint
+    mid  = (lo + hi) / 2
     half = (hi - lo) / 2 * cal_scalar
-    return float(mid - half), float(mid + half)
+    return mid - half, mid + half
