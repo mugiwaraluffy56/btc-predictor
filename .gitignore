@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.whl
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Agent / AI tooling
+.claude/
+.cursor/
+.aider*
+.continue/
+.copilot/
+*.claude
+.task/
+.agent/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+
+# Jupyter / Colab
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.cache
+
+# Runtime generated (committed separately when final)
+predictions.jsonl
+metrics.json
+grid_search_results.csv
