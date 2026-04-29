@@ -644,4 +644,4 @@
 {"bar_index": 715, "timestamp": "2026-04-29T13:00:00+00:00", "lo": 76207.01, "hi": 77412.4, "actual": 76570.0, "hit": true, "width": 1205.38, "winkler": 1205.38, "cal_scalar": 1.2409}
 {"bar_index": 716, "timestamp": "2026-04-29T14:00:00+00:00", "lo": 76003.94, "hi": 77189.2, "actual": 75924.25, "hit": false, "width": 1185.26, "winkler": 4372.89, "cal_scalar": 1.2409}
 {"bar_index": 717, "timestamp": "2026-04-29T15:00:00+00:00", "lo": 75368.19, "hi": 76479.62, "actual": 75803.54, "hit": true, "width": 1111.44, "winkler": 1111.44, "cal_scalar": 1.1345}
-{"bar_index": 718, "timestamp": "2026-04-29T16:00:00+00:00", "lo": 75231.33, "hi": 76349.14, "actual": 75995.55, "hit": true, "width": 1117.81, "winkler": 1117.81, "cal_scalar": 1.1345}
+{"bar_index": 718, "timestamp": "2026-04-29T16:00:00+00:00", "lo": 75231.33, "hi": 76349.14, "actual": 76169.59, "hit": true, "width": 1117.81, "winkler": 1117.81, "cal_scalar": 1.1345}
